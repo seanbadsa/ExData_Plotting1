@@ -1,4 +1,4 @@
-
+###ptot1.R
 #####################################################################
 # RUN THE PROGRAM AS IS
 # FIRST TIME RUN MAY TAKE LITTLE LONGER
@@ -39,6 +39,8 @@ if (!file.exists(destfile)) {
   cat("## Filtering required records from the file...   ##\n")
   pc <- filter(pc, Date=='1/2/2007' | Date=='2/2/2007')
   pc$DateTime<-dmy(pc$Date)+hms(pc$Time)
+  pc$DateTime <- strptime(paste(pc$Date, pc$Time, sep=" "), format="%d/%m/%Y %H:%M:%S")
+  
   write.table(pc,subfile,sep=';')
   cat("##  Read the filtered file .... ###\n")
   pc<-read.table(subfile,header=TRUE,sep=';')
