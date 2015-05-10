@@ -50,12 +50,17 @@ pc<-read.table(subfile,header=TRUE,sep=';')
 }
 
 
-######
-## Q2
-png(filename='plot2.png',width=480,height=480,units='px')
-plot(pc$DateTime,pc$Global_active_power,ylab='Global Active Power (kilowatts)', xlab='', type='l')
-x<-dev.off()
+pc$DateTime <- strptime(paste(pc$Date, pc$Time, sep=" "), 
+                          format="%d/%m/%Y %H:%M:%S")
 
-#### end ###
+# Open png device
+png("plot2.png", width=480, height=480)
 
+# Plot the graph
+plot(pc$DateTime, pc$Global_active_power, type="l", 
+     xlab="", ylab="Global Active Power (kilowatts)")
+
+# Turn off device
+x <-dev.off()
+#########################################
 
