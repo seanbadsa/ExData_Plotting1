@@ -40,6 +40,7 @@ if (!file.exists(destfile)) {
   cat("## Filtering required records from the file...   ##\n")
   pc <- filter(pc, Date=='1/2/2007' | Date=='2/2/2007')
   pc$DateTime<-dmy(pc$Date)+hms(pc$Time)
+  pc$DateTime <- strptime(paste(pc$Date, pc$Time, sep=" "), format="%d/%m/%Y %H:%M:%S")
   write.table(pc,subfile,sep=';')
   cat("##  Read the filtered file .... ###\n")
   pc<-read.table(subfile,header=TRUE,sep=';')
@@ -50,28 +51,28 @@ pc<-read.table(subfile,header=TRUE,sep=';')
 }
 
 ###########
-png(filename='plot4.png',width=480,height=480,units='px')
+pc$DateTime <- strptime(paste(pc$Date, pc$Time, sep=" "), format="%d/%m/%Y %H:%M:%S")
+                          
+### Q4
+# Open png grapic  device
+png("plot4.png", width=480, height=480)
 
-# make 4 plots
-par(mfrow=c(2,2))
+# Define 2x2 graph canvas
+par(mfrow=c(2, 2))
 
-# plot data on top left (1,1)
-plot(pc$DateTime,pc$Global_active_power,ylab='Global Active Power',xlab='',type='l')
+plot(pc$DateTime, pc$Global_active_power, type="l", 
+     xlab="", ylab="Global Active Power")
+plot(pc$DateTime, pc$Voltage, type="l", 
+     xlab="datetime", ylab="Voltage")
+plot(pc$DateTime, pc$Sub_metering_1, type="l", 
+     xlab="", ylab="Energy sub metering")
+lines(pc$DateTime, pc$Sub_metering_2, col="red")
+lines(pc$DateTime, pc$Sub_metering_3, col="blue")
+legend("topright", bty="n", lty=1, col=c("black", "red", "blue"), 
+       legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+plot(pc$DateTime, pc$Global_reactive_power, type="l", 
+     xlab="datetime", ylab="Global_reactive_Power")
 
-# plot data on top right (1,2)
-plot(pc$DateTime,pc$Voltage,xlab='datetime',ylab='Voltage',type='l')
-
-# plot data on bottom left (2,1)
-lncol<-c('black','red','blue')
-lbls<-c('Sub_metering_1','Sub_metering_2','Sub_metering_3')
-plot(pc$DateTime,pc$SubMetering_1,type='l',col=lncol[1],xlab='',ylab='Energy sub metering')
-lines(pc$DateTime,pc$SubMetering_2,col=lncol[2])
-lines(pc$DateTime,pc$SubMetering_3,col=lncol[3])
-
-# plot data on bottom right (2,2)
-plot(pc$DateTime,pc$Global_reactive_power,xlab='datetime',ylab='Global_reactive_power',type='l')
-
-# close device
-x<-dev.off()
-###########################################
-
+# Turn off device by handelling null values
+y <- dev.off()
+#######
